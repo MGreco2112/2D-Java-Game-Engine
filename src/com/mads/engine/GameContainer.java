@@ -1,10 +1,14 @@
 package com.mads.engine;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+
 public class GameContainer implements Runnable {
 
     private Thread thread;
     private Window window;
     private Renderer renderer;
+    private Input input;
 
     private boolean running = false;
     private final double UPDATE_CAP = 1.0/60.0; //60 updates per second
@@ -19,6 +23,7 @@ public class GameContainer implements Runnable {
     public void start() {
         window = new Window(this);
         renderer = new Renderer(this);
+        input = new Input(this);
 
         //at container start assign a new thread with runnable target GameContainer passed as 'this'
         thread = new Thread(this);
@@ -55,8 +60,11 @@ public class GameContainer implements Runnable {
             while (unprocessedTime >= UPDATE_CAP) {
                 unprocessedTime -= UPDATE_CAP;
                 render = true;
+
                 //TODO: update game
-                
+
+                input.update();
+
                 if (frameTime >= 1.0) {
 
                     frameTime = 0;

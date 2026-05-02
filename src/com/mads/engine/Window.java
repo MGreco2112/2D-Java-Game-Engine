@@ -48,4 +48,8 @@ public class Window {
     public BufferedImage getImage() {
         return image;
     }
+
+    public JFrame getFrame() {
+        return frame;
+    }
 }
