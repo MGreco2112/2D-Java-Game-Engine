@@ -3,15 +3,73 @@ package com.mads.engine;
 public class GameContainer implements Runnable {
 
     private Thread thread;
+    private Window window;
 
     private boolean running = false;
     private final double UPDATE_CAP = 1.0/60.0; //60 updates per second
+    private int width = 320, height = 240; //px
+    private float scale = 4.0f;
+    private String title = "MajEngine v1.0";
 
     public GameContainer() {
 
     }
 
+    public Thread getThread() {
+        return thread;
+    }
+
+    public void setThread(Thread thread) {
+        this.thread = thread;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    public double getUPDATE_CAP() {
+        return UPDATE_CAP;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public float getScale() {
+        return scale;
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public void start() {
+        window = new Window(this);
+
         //at container start assign a new thread with runnable target GameContainer passed as 'this'
         thread = new Thread(this);
         thread.run(); //main thread, .start() for side thread
@@ -60,6 +118,7 @@ public class GameContainer implements Runnable {
 
             if (render) {
                 //TODO: render game
+                window.update();
                 frames++;
 
             } else {
