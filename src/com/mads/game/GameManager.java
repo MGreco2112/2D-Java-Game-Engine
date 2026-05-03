@@ -3,13 +3,16 @@ package com.mads.game;
 import com.mads.engine.AbstractGame;
 import com.mads.engine.GameContainer;
 import com.mads.engine.Renderer;
+import com.mads.engine.gfx.Image;
 
 import java.awt.event.KeyEvent;
 
 public class GameManager extends AbstractGame {
 
-    public GameManager() {
+    private Image image;
 
+    public GameManager() {
+        image = new Image("/test.png");
     }
 
     @Override
@@ -20,8 +23,8 @@ public class GameManager extends AbstractGame {
     }
 
     @Override
-    public void render(GameContainer gc, Renderer renderer) {
-
+    public void render(GameContainer gc, Renderer r) {
+        r.drawImage(image, gc.getInput().getMouseX(), gc.getInput().getMouseY());
     }
 
     //entry point for game
