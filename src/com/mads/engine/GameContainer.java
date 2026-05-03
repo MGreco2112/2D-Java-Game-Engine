@@ -9,6 +9,7 @@ public class GameContainer implements Runnable {
     private Window window;
     private Renderer renderer;
     private Input input;
+    private AbstractGame game;
 
     private boolean running = false;
     private final double UPDATE_CAP = 1.0/60.0; //60 updates per second
@@ -16,8 +17,8 @@ public class GameContainer implements Runnable {
     private float scale = 4.0f;
     private String title = "MajEngine v1.0";
 
-    public GameContainer() {
-
+    public GameContainer(AbstractGame game) {
+        this.game = game;
     }
 
     public void start() {
@@ -61,7 +62,7 @@ public class GameContainer implements Runnable {
                 unprocessedTime -= UPDATE_CAP;
                 render = true;
 
-                //TODO: update game
+                game.update(this, (float) UPDATE_CAP);
 
                 input.update();
 
@@ -76,7 +77,7 @@ public class GameContainer implements Runnable {
 
             if (render) {
                 renderer.clear();
-                //TODO: render game
+                game.render(this, renderer);
                 window.update();
                 frames++;
 
@@ -95,11 +96,6 @@ public class GameContainer implements Runnable {
 
     private void dispose() {
 
-    }
-
-    public static void main(String[] args) {
-        GameContainer gc = new GameContainer();
-        gc.start();
     }
 
     public Thread getThread() {
@@ -156,5 +152,9 @@ public class GameContainer implements Runnable {
 
     public Window getWindow() {
         return window;
+    }
+
+    public Input getInput() {
+        return input;
     }
 }
