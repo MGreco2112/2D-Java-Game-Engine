@@ -4,15 +4,16 @@ import com.mads.engine.AbstractGame;
 import com.mads.engine.GameContainer;
 import com.mads.engine.Renderer;
 import com.mads.engine.gfx.Image;
+import com.mads.engine.gfx.ImageTile;
 
 import java.awt.event.KeyEvent;
 
 public class GameManager extends AbstractGame {
 
-    private Image image;
+    private ImageTile image;
 
     public GameManager() {
-        image = new Image("/test.png");
+        image = new ImageTile("/tile_test.png", 16, 16);
     }
 
     @Override
@@ -20,14 +21,26 @@ public class GameManager extends AbstractGame {
         if (gc.getInput().isKeyDown(KeyEvent.VK_A)) {
             System.out.println("A was pressed");
         }
+
+        temp += dt * 20;
+
+        if (temp > 3) {
+            temp = 0;
+        }
     }
+
+    float temp = 0;
 
     @Override
     public void render(GameContainer gc, Renderer r) {
-        r.drawImage(
+
+
+        r.drawImageTile(
                 image,
-                gc.getInput().getMouseX(),
-                gc.getInput().getMouseY()
+                gc.getInput().getMouseX() - 32,
+                gc.getInput().getMouseY() - 32,
+                (int) temp,
+                0
         );
     }
 
