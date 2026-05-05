@@ -3,7 +3,6 @@ package com.mads.game;
 import com.mads.engine.AbstractGame;
 import com.mads.engine.GameContainer;
 import com.mads.engine.Renderer;
-import com.mads.engine.gfx.Image;
 import com.mads.engine.gfx.ImageTile;
 
 import java.awt.event.KeyEvent;
