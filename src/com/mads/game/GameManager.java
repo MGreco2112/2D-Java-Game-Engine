@@ -3,6 +3,7 @@ package com.mads.game;
 import com.mads.engine.AbstractGame;
 import com.mads.engine.GameContainer;
 import com.mads.engine.Renderer;
+import com.mads.engine.audio.SoundClip;
 import com.mads.engine.gfx.ImageTile;
 
 import java.awt.event.KeyEvent;
@@ -10,15 +11,18 @@ import java.awt.event.KeyEvent;
 public class GameManager extends AbstractGame {
 
     private ImageTile image;
+    private SoundClip clip;
 
     public GameManager() {
         image = new ImageTile("/tile_test.png", 16, 16);
+        clip = new SoundClip("/audio/test.wav");
+//        clip.setVolume(-50f);
     }
 
     @Override
     public void update(GameContainer gc, float dt) {
         if (gc.getInput().isKeyDown(KeyEvent.VK_A)) {
-            System.out.println("A was pressed");
+            clip.play();
         }
 
         temp += dt * 20;
