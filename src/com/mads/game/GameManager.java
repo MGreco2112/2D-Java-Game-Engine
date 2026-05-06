@@ -4,17 +4,19 @@ import com.mads.engine.AbstractGame;
 import com.mads.engine.GameContainer;
 import com.mads.engine.Renderer;
 import com.mads.engine.audio.SoundClip;
+import com.mads.engine.gfx.Image;
 import com.mads.engine.gfx.ImageTile;
 
 import java.awt.event.KeyEvent;
 
 public class GameManager extends AbstractGame {
 
-    private ImageTile image, image2;
+    private Image image;
+    private ImageTile image2;
     private SoundClip clip;
 
     public GameManager() {
-        image = new ImageTile("/pattern_test.png", 16, 16);
+        image = new Image("/pattern_test.png");
         image2 = new ImageTile("/pattern_test2.png", 16, 16);
         image2.setAlpha(true);
         clip = new SoundClip("/audio/test.wav");
@@ -39,7 +41,7 @@ public class GameManager extends AbstractGame {
     @Override
     public void render(GameContainer gc, Renderer r) {
         r.setzDepth(Integer.MAX_VALUE);
-        r.drawImage(image2, gc.getInput().getMouseX(), gc.getInput().getMouseY());
+        r.drawImageTile(image2, gc.getInput().getMouseX(), gc.getInput().getMouseY(), 1, 1);
         r.setzDepth(0);
         r.drawImage(image, 10, 10);
 //        r.drawFillRect(-10, 10, 32, 32, 0xffffccff);

@@ -7,6 +7,8 @@ import com.mads.engine.gfx.ImageTile;
 
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Renderer {
 
@@ -43,6 +45,20 @@ public class Renderer {
     public void process() {
         processing = true;
 
+        Collections.sort(imageRequests, new Comparator<ImageRequest>() {
+            @Override
+            public int compare(ImageRequest i0, ImageRequest i1) {
+                if (i0.zDepth < i1.zDepth) {
+                    return -1;
+                }
+                if (i0.zDepth > i1.zDepth) {
+                    return 1;
+                }
+
+                return 0;
+            }
+        });
+
         for (int i = 0; i < imageRequests.size(); i++) {
             ImageRequest ir = imageRequests.get(i);
             setzDepth(ir.zDepth);
@@ -66,21 +82,25 @@ public class Renderer {
             return;
         }
 
-        if (zB[x + y * pW] > zDepth) {
+        int index = x + y * pW;
+
+        if (zB[index] > zDepth) {
             return;
         }
 
+        zB[index] = zDepth;
+
         if (alpha == 255) {
-            p[x + y * pW] = value; //render image
+            p[index] = value; //render image
         } else {
             //alpha blending code
-            int pixelColor = p[x + y * pW];
+            int pixelColor = p[index];
 
             int newRed = ((pixelColor >> 16) & 0xff) - (int) (((pixelColor >> 16) & 0xff - ((value >> 16) & 0xff)) * (alpha / 255f));
             int newGreen = ((pixelColor >> 8) & 0xff) - (int) (((pixelColor >> 8) & 0xff - ((value >> 8) & 0xff)) * (alpha / 255f));
             int newBlue = (pixelColor & 0xff) - (int) (((pixelColor & 0xff) - (value & 0xff)) * (alpha / 255f));
 
-            p[x + y * pW] = (255 << 24 | newRed << 16 | newGreen << 8 | newBlue); //render image
+            p[index] = (255 << 24 | newRed << 16 | newGreen << 8 | newBlue); //render image
         }
 
     }
@@ -158,6 +178,11 @@ public class Renderer {
     }
 
     public void drawImageTile(ImageTile image, int offX, int offY, int tileX, int tileY) {
+
+        if (image.isAlpha() && !processing) {
+            imageRequests.add(new ImageRequest(image.getTileImage(tileX, tileY), zDepth, offX, offY));
+            return;
+        }
 
         if (offX < -image.getTileW()) {
             return;
@@ -240,7 +265,7 @@ public class Renderer {
         if (newWidth + offX >= pW) {newWidth -= newWidth + offX - pW;}
         if (newHeight + offY >= pH) {newHeight -= newHeight + offY - pH;}
 
-        for (int y = newY; y <= newHeight; y++) {
+        for (int y = newY; y < newHeight; y++) {
             for (int x = newX; x < newWidth; x++) {
                 setPixel(x + offX, y + offY, color);
             }
