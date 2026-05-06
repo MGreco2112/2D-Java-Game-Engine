@@ -5,7 +5,6 @@ import com.mads.engine.gfx.Image;
 import com.mads.engine.gfx.ImageTile;
 
 import java.awt.image.DataBufferInt;
-import java.util.Arrays;
 
 public class Renderer {
 
@@ -32,7 +31,13 @@ public class Renderer {
     }
 
     public void setPixel(int x, int y, int value) {
-        if ((x < 0 || x >= pW || y < 0 || y >= pH) || value == 0xffff00ff) {
+
+        if ((x < 0 || x >= pW || y < 0 || y >= pH) || ((value >> 24) & 0xff) == 0) {
+            //last conditional explanation
+                //if the value shifted by 24 bits then bitwise `and` with hex value 255 is equal to 0
+                //then the color is an Alpha Color and can be ignored
+                    //ALPHA: the degree of opacity in a color. 0 opacity represents a transparent pixel
+
             return;
         }
 
@@ -154,5 +159,46 @@ public class Renderer {
                 );
             }
         }
+    }
+
+    public void drawRect(int offX, int offY, int width, int height, int color) {
+
+        for (int y = 0; y <= height; y++) {
+            setPixel(offX, y + offY, color);
+            setPixel(offX + width, y + offY, color);
+        }
+
+        for (int x = 0; x < width; x++) {
+            setPixel(x + offX, offY, color);
+            setPixel(x + offX, offY + height, color);
+        }
+    }
+
+    public void drawFillRect(int offX, int offY, int width, int height, int color) {
+
+
+        //Don't render code
+        if (offX < -width) {return;}
+        if (offY < -height) {return;}
+        if (offX >= pW) {return;}
+        if (offY >= pH) {return;}
+
+        int newX = 0;
+        int newY = 0;
+        int newWidth = width;
+        int newHeight = height;
+
+        //clipping code
+        if (offX < 0) {newX -= offX;}
+        if (offY < 0) {newY -= offY;}
+        if (newWidth + offX >= pW) {newWidth -= newWidth + offX - pW;}
+        if (newHeight + offY >= pH) {newHeight -= newHeight + offY - pH;}
+
+        for (int y = newY; y <= newHeight; y++) {
+            for (int x = newX; x < newWidth; x++) {
+                setPixel(x + offX, y + offY, color);
+            }
+        }
+
     }
 }
