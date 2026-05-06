@@ -10,11 +10,13 @@ import java.awt.event.KeyEvent;
 
 public class GameManager extends AbstractGame {
 
-    private ImageTile image;
+    private ImageTile image, image2;
     private SoundClip clip;
 
     public GameManager() {
-        image = new ImageTile("/tile_test.png", 16, 16);
+        image = new ImageTile("/pattern_test.png", 16, 16);
+        image2 = new ImageTile("/pattern_test2.png", 16, 16);
+        image2.setAlpha(true);
         clip = new SoundClip("/audio/test.wav");
 //        clip.setVolume(-50f);
     }
@@ -36,17 +38,16 @@ public class GameManager extends AbstractGame {
 
     @Override
     public void render(GameContainer gc, Renderer r) {
-        r.drawImage(image, gc.getInput().getMouseX(), gc.getInput().getMouseY());
-
+        r.setzDepth(Integer.MAX_VALUE);
+        r.drawImage(image2, gc.getInput().getMouseX(), gc.getInput().getMouseY());
+        r.setzDepth(0);
+        r.drawImage(image, 10, 10);
 //        r.drawFillRect(-10, 10, 32, 32, 0xffffccff);
     }
 
     //entry point for game
     public static void main(String[] args) {
         GameContainer gc = new GameContainer(new GameManager());
-        gc.setWidth(320);
-        gc.setHeight(240);
-        gc.setScale(3f);
         gc.start();
     }
 }

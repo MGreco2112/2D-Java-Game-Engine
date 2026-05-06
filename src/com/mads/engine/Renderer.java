@@ -2,16 +2,24 @@ package com.mads.engine;
 
 import com.mads.engine.gfx.Font;
 import com.mads.engine.gfx.Image;
+import com.mads.engine.gfx.ImageRequest;
 import com.mads.engine.gfx.ImageTile;
 
 import java.awt.image.DataBufferInt;
+import java.util.ArrayList;
 
 public class Renderer {
 
+    private Font font = Font.STANDARD;
+    private ArrayList<ImageRequest> imageRequests = new ArrayList<ImageRequest>();
+
     private int pW, pH;
     private int[] p;
+    private int[] zB;
 
-    private Font font = Font.STANDARD;
+    private int zDepth = 0;
+    private boolean processing = false;
+
 
     public Renderer(GameContainer gc) {
         pW = gc.getWidth();
@@ -22,17 +30,34 @@ public class Renderer {
                         .getRaster()
                         .getDataBuffer()
         ).getData();
+        zB = new int[p.length];
     }
 
     public void clear() {
         for (int i = 0; i < p.length; i++) {
             p[i] = 0xff000000;
+            zB[i] = 0xff000000;
         }
+    }
+
+    public void process() {
+        processing = true;
+
+        for (int i = 0; i < imageRequests.size(); i++) {
+            ImageRequest ir = imageRequests.get(i);
+            setzDepth(ir.zDepth);
+            drawImage(ir.image, ir.offX, ir.offY);
+        }
+
+        processing = false;
+        imageRequests.clear();
     }
 
     public void setPixel(int x, int y, int value) {
 
-        if ((x < 0 || x >= pW || y < 0 || y >= pH) || ((value >> 24) & 0xff) == 0) {
+        int alpha = ((value >> 24) & 0xff);
+
+        if ((x < 0 || x >= pW || y < 0 || y >= pH) || alpha == 0) {
             //last conditional explanation
                 //if the value shifted by 24 bits then bitwise `and` with hex value 255 is equal to 0
                 //then the color is an Alpha Color and can be ignored
@@ -41,7 +66,23 @@ public class Renderer {
             return;
         }
 
-        p[x + y * pW] = value;
+        if (zB[x + y * pW] > zDepth) {
+            return;
+        }
+
+        if (alpha == 255) {
+            p[x + y * pW] = value; //render image
+        } else {
+            //alpha blending code
+            int pixelColor = p[x + y * pW];
+
+            int newRed = ((pixelColor >> 16) & 0xff) - (int) (((pixelColor >> 16) & 0xff - ((value >> 16) & 0xff)) * (alpha / 255f));
+            int newGreen = ((pixelColor >> 8) & 0xff) - (int) (((pixelColor >> 8) & 0xff - ((value >> 8) & 0xff)) * (alpha / 255f));
+            int newBlue = (pixelColor & 0xff) - (int) (((pixelColor & 0xff) - (value & 0xff)) * (alpha / 255f));
+
+            p[x + y * pW] = (255 << 24 | newRed << 16 | newGreen << 8 | newBlue); //render image
+        }
+
     }
 
     public void drawText(String text, int offX, int offY, int color) {
@@ -66,6 +107,11 @@ public class Renderer {
     }
 
     public void drawImage(Image image, int offX, int offY) {
+
+        if (image.isAlpha() && !processing) {
+            imageRequests.add(new ImageRequest(image, zDepth, offX, offY));
+            return;
+        }
 
         if (offX < -image.getW()) {
             return;
@@ -200,5 +246,13 @@ public class Renderer {
             }
         }
 
+    }
+
+    public int getzDepth() {
+        return zDepth;
+    }
+
+    public void setzDepth(int zDepth) {
+        this.zDepth = zDepth;
     }
 }
