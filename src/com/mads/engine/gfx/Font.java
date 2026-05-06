@@ -2,7 +2,7 @@ package com.mads.engine.gfx;
 
 public class Font {
 
-    public static final Font STANDARD = new Font("/fonts/standard.png");
+    public static final Font STANDARD = new Font("/fonts/comic.png");
 
     private Image fontImage;
     private int[] offsets;
@@ -10,8 +10,8 @@ public class Font {
 
     public Font(String path) {
         fontImage = new Image(path);
-        offsets = new int[59]; //using 58 unicodes
-        widths = new int[59];
+        offsets = new int[256];
+        widths = new int[256];
         //for Font Image: Blue is beginning of width, Yellow is end of width
 
         //unicode counter variable, font image starts at unicode 0
