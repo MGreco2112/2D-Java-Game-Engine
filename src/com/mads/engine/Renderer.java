@@ -1,9 +1,6 @@
 package com.mads.engine;
 
-import com.mads.engine.gfx.Font;
-import com.mads.engine.gfx.Image;
-import com.mads.engine.gfx.ImageRequest;
-import com.mads.engine.gfx.ImageTile;
+import com.mads.engine.gfx.*;
 
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
@@ -21,7 +18,7 @@ public class Renderer {
     private int[] lM;
     private int[] lB;
 
-    private int ambientColor = 0xff6b6b6b;
+    private int ambientColor = 0xff232323;
     private int zDepth = 0;
     private boolean processing = false;
 
@@ -135,6 +132,18 @@ public class Renderer {
         lM[x + y * pW] = (maxRed << 16 | maxGreen << 8 | maxBlue);
     }
 
+    public void setLightBlock(int x, int y, int value) {
+        if (x < 0 || x >= pW || y < 0 || y >= pH) {
+            return;
+        }
+
+        if (zB[x + y * pW] > zDepth) {
+            return;
+        }
+
+        lB[x + y * pW] = value;
+    }
+
     public void drawText(String text, int offX, int offY, int color) {
 
         int offset = 0;
@@ -202,6 +211,7 @@ public class Renderer {
                         (y + offY),
                         image.getP()[x + y * image.getW()]
                 );
+                setLightBlock(x + offX, y + offY, image.getLightBlock());
             }
         }
     }
@@ -257,6 +267,7 @@ public class Renderer {
                                 * image.getW()
                         ]
                 );
+                setLightBlock(x + offX, y + offY, image.getLightBlock());
             }
         }
     }
@@ -300,6 +311,63 @@ public class Renderer {
             }
         }
 
+    }
+
+    public void drawLight(Light l, int offX, int offY) {
+        for (int i = 0; i <= l.getDiameter(); i++) {
+            drawLightLine(l, l.getRadius(), l.getRadius(), i, 0, offX, offY);
+            drawLightLine(l, l.getRadius(), l.getRadius(), i, l.getDiameter(), offX, offY);
+            drawLightLine(l, l.getRadius(), l.getRadius(), 0, i, offX, offY);
+            drawLightLine(l, l.getRadius(), l.getRadius(), l.getDiameter(), i, offX, offY);
+        }
+    }
+
+    private void drawLightLine(Light l, int x0, int y0, int x1, int y1, int offX, int offY) {
+        int dx = Math.abs(x1 - x0);
+        int dy = Math.abs(y1 - y0);
+
+        int sx = x0 < x1 ? 1 : -1;
+        int sy = y0 < y1 ? 1 : -1;
+
+        int err = dx - dy;
+        int e2;
+
+        while (true) {
+            int screenX = x0 - l.getRadius() + offX;
+            int screenY = y0 - l.getRadius() + offY;
+
+            if (screenX < 0 || screenX >= pW || screenY < 0 || screenY >= pH) {
+                return;
+            }
+
+            int lightColor = l.getLightValue(x0, y0);
+
+            if (lightColor == 0xff000000) {
+                return;
+            }
+
+            if (lB[screenX + screenY * pW] == Light.FULL) {
+                return;
+            }
+
+            setLightMap(screenX, screenY, lightColor);
+
+            if (x0 == x1 && y0 == y1) {
+                break;
+            }
+
+            e2 = 2 * err;
+
+            if (e2 > -1 * dy) {
+                err -= dy;
+                x0 += sx;
+            }
+
+            if (e2 < dx) {
+                err += dx;
+                y0 += sy;
+            }
+        }
     }
 
     public int getzDepth() {

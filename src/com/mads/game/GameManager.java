@@ -6,23 +6,29 @@ import com.mads.engine.Renderer;
 import com.mads.engine.audio.SoundClip;
 import com.mads.engine.gfx.Image;
 import com.mads.engine.gfx.ImageTile;
+import com.mads.engine.gfx.Light;
 
 
 import java.awt.event.KeyEvent;
 
 public class GameManager extends AbstractGame {
 
-    Image image;
-    Image image2;
+    private final Light light;
+
+    private Image image;
+    private Image image2;
+
     private SoundClip clip;
 
     public GameManager() {
-        image  = new Image("/test.png");
-        image.setAlpha(true);
+        image  = new Image("/Test2.png");
+        image.setAlpha(false);
+        image.setLightBlock(Light.FULL);
         image2 = new Image("/pattern_test2.png");
-        image2.setAlpha(true);
+        image2.setAlpha(false);
         clip = new SoundClip("/audio/test.wav");
 //        clip.setVolume(-50f);
+        light = new Light(100, 0xff00ffff);
     }
 
     @Override
@@ -42,14 +48,12 @@ public class GameManager extends AbstractGame {
 
     @Override
     public void render(GameContainer gc, Renderer r) {
-        for (int x = 0; x < image.getW(); x++) {
-            for (int y = 0; y < image.getH(); y++) {
-                r.setLightMap(x,y,image.getP()[x + y * image.getW()]);
-            }
-        }
 
-        r.setzDepth(1);
-        r.drawImage(image2, gc.getInput().getMouseX(), gc.getInput().getMouseY());
+        r.setzDepth(0);
+        r.drawImage(image2, 0, 0);
+        r.drawImage(image, 100, 100);
+
+        r.drawLight(light, gc.getInput().getMouseX(), gc.getInput().getMouseY());
 
     }
 
