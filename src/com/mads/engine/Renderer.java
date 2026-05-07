@@ -18,6 +18,8 @@ public class Renderer {
     private int pW, pH;
     private int[] p;
     private int[] zB;
+    private int[] lM;
+    private int[] lB;
 
     private int zDepth = 0;
     private boolean processing = false;
@@ -33,6 +35,8 @@ public class Renderer {
                         .getDataBuffer()
         ).getData();
         zB = new int[p.length];
+        lM = new int[p.length];
+        lB = new int[p.length];
     }
 
     public void clear() {
@@ -63,6 +67,15 @@ public class Renderer {
             ImageRequest ir = imageRequests.get(i);
             setzDepth(ir.zDepth);
             drawImage(ir.image, ir.offX, ir.offY);
+        }
+
+        for (int i = 0; i < p.length; i++) {
+            float r = ((lM[i] >> 16) & 0xff) / 255f;
+            float g = ((lM[i] >> 8) & 0xff) / 255f;
+            float b = (lM[i] & 0xff) / 255f;
+
+            p[i] = ((int) (((p[i] >> 16) & 0xff) * r) << 16 | (int) (((p[i] >> 8) & 0xff) * g) << 8 | (int) ((p[i] & 0xff) * b));
+
         }
 
         processing = false;
@@ -100,9 +113,23 @@ public class Renderer {
             int newGreen = ((pixelColor >> 8) & 0xff) - (int) (((pixelColor >> 8) & 0xff - ((value >> 8) & 0xff)) * (alpha / 255f));
             int newBlue = (pixelColor & 0xff) - (int) (((pixelColor & 0xff) - (value & 0xff)) * (alpha / 255f));
 
-            p[index] = (255 << 24 | newRed << 16 | newGreen << 8 | newBlue); //render image
+            p[index] = (newRed << 16 | newGreen << 8 | newBlue); //render image
         }
 
+    }
+
+    public void setLightMap(int x, int y, int value) {
+        if (x < 0 || x >= pW || y < 0 || y >= pH) {
+            return;
+        }
+
+        int baseColor = lM[x + y * pW];
+
+        int maxRed = Math.max(((baseColor >> 16) & 0xff), ((value >> 16) & 0xff));
+        int maxGreen = Math.max(((baseColor >> 8) & 0xff), ((value >> 8) & 0xff));
+        int maxBlue = Math.max(baseColor & 0xff, value & 0xff);
+
+        lM[x + y * pW] = (maxRed << 16 | maxGreen << 8 | maxBlue);
     }
 
     public void drawText(String text, int offX, int offY, int color) {

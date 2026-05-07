@@ -37,7 +37,6 @@ public class GameManager extends AbstractGame {
     @Override
     public void render(GameContainer gc, Renderer r) {
 
-//        r.drawFillRect(10, 10, 32, 32, 0xffffccff);
     }
 
     //entry point for game
