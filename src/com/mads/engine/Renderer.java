@@ -21,6 +21,7 @@ public class Renderer {
     private int[] lM;
     private int[] lB;
 
+    private int ambientColor = 0xff6b6b6b;
     private int zDepth = 0;
     private boolean processing = false;
 
@@ -43,6 +44,8 @@ public class Renderer {
         for (int i = 0; i < p.length; i++) {
             p[i] = 0xff000000;
             zB[i] = 0xff000000;
+            lM[i] = ambientColor;
+            lB[i] = 0xff000000;
         }
     }
 
