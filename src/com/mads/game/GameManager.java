@@ -12,7 +12,7 @@ public class GameManager extends AbstractGame {
 
 
     public GameManager() {
-        objects.add(new PlayerObject(2,2));
+//        objects.add();
     }
 
     @Override
