@@ -1,5 +1,6 @@
-package com.mads.engine;
+package com.mads.engine.screen;
 
+import com.mads.engine.game_handler.GameContainer;
 import com.mads.engine.gfx.*;
 
 import java.awt.image.DataBufferInt;

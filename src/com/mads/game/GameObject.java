@@ -1,7 +1,7 @@
 package com.mads.game;
 
-import com.mads.engine.GameContainer;
-import com.mads.engine.Renderer;
+import com.mads.engine.game_handler.GameContainer;
+import com.mads.engine.screen.Renderer;
 
 public abstract class GameObject {
     protected String tag;

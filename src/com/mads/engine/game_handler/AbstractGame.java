@@ -1,4 +1,6 @@
-package com.mads.engine;
+package com.mads.engine.game_handler;
+
+import com.mads.engine.screen.Renderer;
 
 public abstract class AbstractGame {
 

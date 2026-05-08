@@ -1,7 +1,8 @@
-package com.mads.engine;
+package com.mads.engine.game_handler;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
+import com.mads.engine.screen.Input;
+import com.mads.engine.screen.Renderer;
+import com.mads.engine.screen.Window;
 
 public class GameContainer implements Runnable {
 

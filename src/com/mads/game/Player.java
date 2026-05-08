@@ -1,13 +1,13 @@
 package com.mads.game;
 
-import com.mads.engine.GameContainer;
-import com.mads.engine.Renderer;
+import com.mads.engine.game_handler.GameContainer;
+import com.mads.engine.screen.Renderer;
 
 import java.awt.event.KeyEvent;
 
 public class Player extends GameObject {
 
-    public int speed = 50;
+    public int speed = 100;
 
     public Player(int posX, int posY) {
         tag = "player";

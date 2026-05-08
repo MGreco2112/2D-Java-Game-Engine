@@ -1,4 +1,6 @@
-package com.mads.engine;
+package com.mads.engine.screen;
+
+import com.mads.engine.game_handler.GameContainer;
 
 import javax.swing.*;
 import java.awt.*;
