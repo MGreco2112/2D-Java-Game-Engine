@@ -47,6 +47,8 @@ public class GameContainer implements Runnable {
         double frameTime = 0.0;
         int frames = 0, fps = 0;
 
+        game.init(this);
+
         while (running) {
 
             render = false;
@@ -157,5 +159,13 @@ public class GameContainer implements Runnable {
 
     public Input getInput() {
         return input;
+    }
+
+    public Renderer getRenderer() {
+        return renderer;
+    }
+
+    public void setRenderer(Renderer renderer) {
+        this.renderer = renderer;
     }
 }

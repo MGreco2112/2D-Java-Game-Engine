@@ -295,7 +295,6 @@ public class Renderer {
 
     public void drawFillRect(int offX, int offY, int width, int height, int color) {
 
-
         //Don't render code
         if (offX < -width) {return;}
         if (offY < -height) {return;}
@@ -388,5 +387,13 @@ public class Renderer {
 
     public void setzDepth(int zDepth) {
         this.zDepth = zDepth;
+    }
+
+    public int getAmbientColor() {
+        return ambientColor;
+    }
+
+    public void setAmbientColor(int ambientColor) {
+        this.ambientColor = ambientColor;
     }
 }
