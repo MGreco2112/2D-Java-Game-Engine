@@ -5,7 +5,7 @@ import com.mads.engine.GameContainer;
 import com.mads.engine.Renderer;
 import com.mads.engine.audio.SoundClip;
 import com.mads.engine.gfx.Image;
-import com.mads.engine.gfx.ImageTile;
+
 import com.mads.engine.gfx.Light;
 
 
