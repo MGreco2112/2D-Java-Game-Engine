@@ -22,7 +22,7 @@ public class GameManager extends AbstractGame {
 
     public GameManager() {
         image  = new Image("/Test2.png");
-        image.setAlpha(false);
+        image.setAlpha(true);
         image.setLightBlock(Light.FULL);
         image2 = new Image("/pattern_test2.png");
         image2.setAlpha(false);
