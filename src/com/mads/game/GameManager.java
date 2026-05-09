@@ -2,17 +2,21 @@ package com.mads.game;
 
 import com.mads.engine.game_handler.AbstractGame;
 import com.mads.engine.game_handler.GameContainer;
+import com.mads.engine.gfx.Image;
 import com.mads.engine.screen.Renderer;
 
 import java.util.ArrayList;
 
 public class GameManager extends AbstractGame {
 
+    private int[] collision;
+    private int levelW, levelH;
     private ArrayList<GameObject> objects = new ArrayList<>();
 
 
     public GameManager() {
         objects.add(new Player(2, 2));
+        loadLevel("/level.png");
     }
 
     @Override
@@ -37,8 +41,39 @@ public class GameManager extends AbstractGame {
 
     @Override
     public void render(GameContainer gc, Renderer r) {
+        for (int y = 0; y < levelH; y++) {
+            for (int x = 0; x < levelW; x++) {
+
+                int color = 0xfff9f9f9;
+
+                if (collision[x + y * levelW] == 1) {
+                    color = 0xff0f0f0f;
+                }
+
+                r.drawFillRect(x * 16, y * 16, 16, 16, color);
+            }
+        }
+
         for (GameObject obj : objects) {
             obj.render(gc, r);
+        }
+    }
+
+    public void loadLevel(String path) {
+        Image levelImage = new Image(path);
+
+        levelW = levelImage.getW();
+        levelH = levelImage.getH();
+        collision = new int[levelW * levelH];
+
+        for (int y = 0; y < levelImage.getH(); y++) {
+            for (int x = 0; x < levelImage.getW(); x++) {
+                if (levelImage.getP()[x + y * levelImage.getW()] == 0xff000000) {
+                    collision[x + y * levelImage.getW()] = 1;
+                } else {
+                    collision[x + y * levelImage.getW()] = 0;
+                }
+            }
         }
     }
 
