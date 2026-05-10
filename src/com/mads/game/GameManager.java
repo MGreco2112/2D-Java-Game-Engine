@@ -9,13 +9,15 @@ import java.util.ArrayList;
 
 public class GameManager extends AbstractGame {
 
-    private int[] collision;
+    public static final int TS = 16;
+
+    private boolean[] collision;
     private int levelW, levelH;
     private ArrayList<GameObject> objects = new ArrayList<>();
 
 
     public GameManager() {
-        objects.add(new Player(2, 2));
+        objects.add(new Player(6, 4));
         loadLevel("/level.png");
     }
 
@@ -30,7 +32,7 @@ public class GameManager extends AbstractGame {
         for (int i = 0; i < objects.size(); i++) {
 
             GameObject obj = objects.get(i);
-            obj.update(gc, dt);
+            obj.update(gc, this, dt);
 
             if (obj.isDead()) {
                 objects.remove(obj);
@@ -46,11 +48,11 @@ public class GameManager extends AbstractGame {
 
                 int color = 0xfff9f9f9;
 
-                if (collision[x + y * levelW] == 1) {
+                if (collision[x + y * levelW]) {
                     color = 0xff0f0f0f;
                 }
 
-                r.drawFillRect(x * 16, y * 16, 16, 16, color);
+                r.drawFillRect(x * TS, y * TS, TS, TS, color);
             }
         }
 
@@ -64,17 +66,25 @@ public class GameManager extends AbstractGame {
 
         levelW = levelImage.getW();
         levelH = levelImage.getH();
-        collision = new int[levelW * levelH];
+        collision = new boolean[levelW * levelH];
 
         for (int y = 0; y < levelImage.getH(); y++) {
             for (int x = 0; x < levelImage.getW(); x++) {
                 if (levelImage.getP()[x + y * levelImage.getW()] == 0xff000000) {
-                    collision[x + y * levelImage.getW()] = 1;
+                    collision[x + y * levelImage.getW()] = true;
                 } else {
-                    collision[x + y * levelImage.getW()] = 0;
+                    collision[x + y * levelImage.getW()] = false;
                 }
             }
         }
+    }
+
+    public boolean getCollision(int x, int y) {
+        if (x < 0 || x >= levelW || y < 0 || y >= levelH) {
+            return true;
+        }
+
+        return collision[x + y * levelW];
     }
 
     //entry point for game
